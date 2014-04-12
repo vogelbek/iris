@@ -22,4 +22,7 @@ ActiveRecord::Schema.define(version: 20140412192334) do
     t.datetime "updated_at"
   end
 
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
 end
