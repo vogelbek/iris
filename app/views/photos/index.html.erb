@@ -16,7 +16,7 @@
   <tbody>
     <% @photos.each do |photo| %>
       <tr>
-        <td><%= photo.url %></td>
+        <td><%= truncate photo.url, length: 50 %></td>
         <td><%= photo.lat %></td>
         <td><%= photo.long %></td>
         <td><%= photo.datetime %></td>
