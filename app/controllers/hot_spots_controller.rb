@@ -33,12 +33,12 @@ class HotSpotsController < ApplicationController
   def build_date_scale start_time, end_time
     scale = (1..10).map do |segment|
       increment = time_increment( start_time, end_time )
-      bottom = (start_time + (segment - 1) * increment).to_f
-      top = (start_time + segment * increment).to_f
-      middle = (bottom + top) / 2
-      { bottom: Time.at( bottom ),
-        middle: Time.at( middle ),
-        top: Time.at( top )}
+      segment_start = (start_time + (segment - 1) * increment).to_f
+      segment_end = (start_time + segment * increment).to_f
+      segment_midpoint = (segment_start + segment_end) / 2
+      { segment_start: Time.at( segment_start ),
+        segment_midpoint: Time.at( segment_midpoint ),
+        segment_end: Time.at( segment_end )}
     end
     scale
   end
@@ -55,9 +55,9 @@ class HotSpotsController < ApplicationController
     scale = build_date_scale( start_time, end_time )
     scale.map do |increment|
       count = count_photos_in_date_increment( hot_spot,
-                                              increment[:bottom],
-                                              increment[:top] )
-      {increment[:middle] => count}
+                                              increment[:segment_start],
+                                              increment[:segment_end] )
+      { increment => count}
     end
   end
 end
