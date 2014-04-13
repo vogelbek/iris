@@ -2,8 +2,10 @@ class HotSpotsController < ApplicationController
   before_action :set_start, :set_end
 
   def hot_spots_index
-    @hot_spots = HotSpot.all
-    @photos = count_photos_per_date_scale HotSpot.first, @start_time, @end_time
+    @hot_spots = HotSpot.all.map do |spot|
+      City.new  spot.city, spot.lat, spot.long,
+                count_photos_per_date_scale( spot, @start_time, @end_time )
+    end
   end
 
   private
@@ -36,9 +38,8 @@ class HotSpotsController < ApplicationController
       segment_start = (start_time + (segment - 1) * increment).to_f
       segment_end = (start_time + segment * increment).to_f
       segment_midpoint = (segment_start + segment_end) / 2
-      { segment_start: Time.at( segment_start ),
-        segment_midpoint: Time.at( segment_midpoint ),
-        segment_end: Time.at( segment_end )}
+      [Time.at( segment_start ),  Time.at( segment_midpoint ),
+                                  Time.at( segment_end )]
     end
     scale
   end
@@ -55,9 +56,12 @@ class HotSpotsController < ApplicationController
     scale = build_date_scale( start_time, end_time )
     scale.map do |increment|
       count = count_photos_in_date_increment( hot_spot,
-                                              increment[:segment_start],
-                                              increment[:segment_end] )
-      { increment => count}
+                                              increment[0],
+                                              increment[2] )
+      Segment.new increment[0], increment[1], increment[2], count
     end
   end
+
+  Segment = Struct.new(:start, :midpoint, :end, :count)
+  City = Struct.new(:city, :lat, :long, :counts)
 end
