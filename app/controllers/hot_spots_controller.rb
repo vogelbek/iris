@@ -8,6 +8,13 @@ class HotSpotsController < ApplicationController
     end
   end
 
+  def hot_spot_index
+    spot = HotSpot.find(params[:id])
+    photos = time_limit_photos( spot, @start_time, @end_time )
+    @hot_spot = City.new  spot.id, spot.city, spot.lat, spot.long,
+                          tidy_photos( photos )
+  end
+
   private
 
   def set_start
@@ -62,6 +69,18 @@ class HotSpotsController < ApplicationController
     end
   end
 
-  Segment = Struct.new(:start, :midpoint, :end, :count)
-  City = Struct.new(:id, :city, :lat, :long, :photo_counts)
+  def tidy_photos photos_list
+    photos_list.map do |photo|
+      Photo.new photo.id, photo.url, photo.datetime
+    end
+  end
+
+  def time_limit_photos hot_spot, start_time, end_time
+    hot_spot.photos.where('datetime BETWEEN ? AND ?',
+                          start_time, end_time).all
+  end
+
+  Segment = Struct.new :start, :midpoint, :end, :count
+  City = Struct.new :id, :city, :lat, :long, :photo_info
+  Photo = Struct.new :id, :url, :datetime
 end
