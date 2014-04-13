@@ -3,7 +3,7 @@ class HotSpotsController < ApplicationController
 
   def hot_spots_index
     @hot_spots = HotSpot.all.map do |spot|
-      City.new  spot.city, spot.lat, spot.long,
+      City.new  spot.id, spot.city, spot.lat, spot.long,
                 count_photos_per_date_scale( spot, @start_time, @end_time )
     end
   end
@@ -63,5 +63,5 @@ class HotSpotsController < ApplicationController
   end
 
   Segment = Struct.new(:start, :midpoint, :end, :count)
-  City = Struct.new(:city, :lat, :long, :counts)
+  City = Struct.new(:id, :city, :lat, :long, :photo_counts)
 end

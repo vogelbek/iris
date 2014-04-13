@@ -1,11 +1,8 @@
 Iris::Application.routes.draw do
 
-  resources :photos
-  root 'photos#index'
+  root 'welcome#welcome'
 
-  get 'hotspots/:id/:start_date/:end_date' => 'hot_spots#hot_spots_index'
-
-  get "welcome/test"
+  get 'hotspots/:start_date/:end_date' => 'hot_spots#hot_spots_index'
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

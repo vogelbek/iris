@@ -1,4 +1,4 @@
 class WelcomeController < ApplicationController
-  def test
+  def welcome
   end
 end
